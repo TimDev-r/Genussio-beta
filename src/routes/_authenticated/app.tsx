@@ -1,8 +1,10 @@
 import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { CalendarDays, Flame, Heart, Home, ShoppingCart } from "lucide-react";
 
 import { householdQuery } from "@/lib/household-query";
+import { MatchWatcher } from "@/components/MatchWatcher";
 export const Route = createFileRoute("/_authenticated/app")({
   beforeLoad: async ({ context }) => {
     const data = await context.queryClient.ensureQueryData(householdQuery());
@@ -21,8 +23,10 @@ const tabs = [
 
 function AppShell() {
   const { t } = useTranslation();
+  const { data } = useSuspenseQuery(householdQuery());
   return (
     <div className="app-frame flex flex-col pb-20">
+      {data.household && <MatchWatcher householdId={data.household.id} />}
       <main className="flex flex-1 flex-col">
         <Outlet />
       </main>

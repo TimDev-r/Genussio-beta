@@ -5,16 +5,19 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/track-event";
 
 export function DeckAdjustedNote({ householdId }: { householdId: string }) {
   const { t } = useTranslation();
   const storageKey = `genussio_deck_seen_${householdId}`;
-  const [seen, setSeen] = useState<string | null>(null);
+  // undefined = not read from storage yet (avoids flashing / tracking before we know)
+  const [seen, setSeen] = useState<string | null | undefined>(undefined);
 
   useEffect(() => {
     try {
       setSeen(localStorage.getItem(storageKey));
     } catch {
+      setSeen(null);
       /* private mode: just show the note */
     }
   }, [storageKey]);
@@ -32,7 +35,13 @@ export function DeckAdjustedNote({ householdId }: { householdId: string }) {
     refetchOnMount: "always",
   });
 
-  if (!adjustedAt || (seen && new Date(seen) >= new Date(adjustedAt))) return null;
+  const visible =
+    seen !== undefined && !!adjustedAt && !(seen && new Date(seen) >= new Date(adjustedAt));
+  useEffect(() => {
+    if (visible) void trackEvent("deck_adjusted", { adjusted_at: adjustedAt }, householdId);
+  }, [visible, adjustedAt, householdId]);
+
+  if (!visible || !adjustedAt) return null;
 
   return (
     <div

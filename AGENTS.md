@@ -40,3 +40,4 @@ use the editor.
 - SQL access-rule tests run all tool-generated migrations in isolated local PostgreSQL via `python3 src/test/database-rls.test.py`; never seed test identities or rows into the connected project.
 - Content imports validate on both client and authenticated server; recipe replacement uses an admin-checked SECURITY INVOKER RPC with a title lock so ingredients and translations commit atomically.
 - Catalog display uses shared field-level locale fallbacks; sample content belongs in literal migration inserts, never page-load seeding.
+- Deck, matching and "Mehr Karten" SQL (deck_candidates, generate_deck, add_cards, get_matches, refresh_deck and its triggers) was written by hand outside Lovable: `supabase/manual/20261114_prompt6_matching.sql`, applied via the Supabase SQL Editor. `deck_candidates` is the single source of the deck filter and cost rules; change it there, not in each function.
