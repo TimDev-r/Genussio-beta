@@ -1,0 +1,9 @@
+# Admin content imports
+
+The six catalog tables retain authenticated read access and gain admin-only write policies. Broad inherited grants are revoked; authenticated users cannot truncate tables. Each server mutation verifies the caller with is_admin() using the authenticated RLS client. Recipe imports use a SECURITY INVOKER transaction with a title advisory lock: source fields update by title, ingredients are replaced, and supplied translations are upserted together. Imports preserve existing image URLs and translations omitted from the payload.
+
+Sample data: 15 recipes, 60 recipe translations, 36 ingredient keys with four translated names plus Austrian source names, 120 non-pantry prices, and 12 fictional offers dated November 9–15, 2026. Prices and offers are realistic examples, not verified retailer data. Neutral bundled image fallback is used whenever a recipe has no image URL.
+
+Public recipe-images bucket creation was refused by workspace public-bucket policy. No bucket exists. Admin-only upload/update/delete and public-read object policies are prepared, and the upload UI handles failure clearly. A workspace owner must enable public buckets in Settings → Privacy & Security; then create the requested public bucket via the storage tool. Do not substitute private storage or bypass the restriction.
+
+Validation and fallback tests plus isolated SQL tests replay all actual migrations, including seed data and storage object policies. Live catalog counts were checked read-only. No test identities were written to the connected database. A real signed-in admin session is unavailable for this external Supabase project, so authenticated browser imports, image upload, and non-admin browser redirect remain unverified. Existing database linter findings predate these migrations.

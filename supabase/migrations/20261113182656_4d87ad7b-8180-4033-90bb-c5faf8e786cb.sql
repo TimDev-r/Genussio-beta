@@ -1,0 +1,10 @@
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.recipes, public.recipe_ingredients, public.deals, public.ingredient_prices, public.recipe_translations, public.ingredient_translations TO authenticated;
+DROP POLICY IF EXISTS recipe_images_public_read ON storage.objects;
+DROP POLICY IF EXISTS recipe_images_admin_select ON storage.objects;
+DROP POLICY IF EXISTS recipe_images_admin_insert ON storage.objects;
+DROP POLICY IF EXISTS recipe_images_admin_update ON storage.objects;
+DROP POLICY IF EXISTS recipe_images_admin_delete ON storage.objects;
+CREATE POLICY recipe_images_admin_select ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'recipe-images' AND public.is_admin());
+CREATE POLICY recipe_images_admin_insert ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'recipe-images' AND public.is_admin());
+CREATE POLICY recipe_images_admin_update ON storage.objects FOR UPDATE TO authenticated USING (bucket_id = 'recipe-images' AND public.is_admin()) WITH CHECK (bucket_id = 'recipe-images' AND public.is_admin());
+CREATE POLICY recipe_images_admin_delete ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'recipe-images' AND public.is_admin());

@@ -1,0 +1,11 @@
+BEGIN;
+REVOKE ALL ON public.admins, public.profiles, public.beta_codes, public.households, public.household_members, public.recipes, public.recipe_ingredients, public.ingredient_prices, public.deals, public.deck_items, public.swipes, public.meal_plan_entries, public.shopping_list_items, public.events, public.feedback, public.reservations, public.recipe_translations, public.ingredient_translations FROM anon, authenticated;
+REVOKE ALL ON SEQUENCE public.events_id_seq FROM anon, authenticated;
+GRANT SELECT ON public.admins TO authenticated;
+GRANT SELECT, INSERT, UPDATE ON public.profiles TO authenticated;
+GRANT SELECT, UPDATE, DELETE ON public.households TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.household_members, public.deck_items, public.swipes, public.meal_plan_entries, public.shopping_list_items, public.reservations TO authenticated;
+GRANT SELECT ON public.recipes, public.recipe_ingredients, public.ingredient_prices, public.deals, public.recipe_translations, public.ingredient_translations TO authenticated;
+GRANT SELECT, INSERT ON public.events, public.feedback TO authenticated;
+GRANT USAGE ON SEQUENCE public.events_id_seq TO authenticated;
+COMMIT;
