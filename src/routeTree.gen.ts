@@ -17,6 +17,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedStartRouteImport } from './routes/_authenticated/start'
 import { Route as JoinInviteCodeRouteImport } from './routes/join.$inviteCode'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminImportRouteImport } from './routes/_authenticated/admin.import'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppHouseholdRouteImport } from './routes/_authenticated/app.household'
@@ -63,6 +64,11 @@ const JoinInviteCodeRoute = JoinInviteCodeRouteImport.update({
   id: '/join/$inviteCode',
   path: '/join/$inviteCode',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminImportRoute =
   AuthenticatedAdminImportRouteImport.update({
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/app/matches': typeof AuthenticatedAppMatchesRoute
   '/app/plan': typeof AuthenticatedAppPlanRoute
   '/rezept/$id': typeof AuthenticatedRezeptIdRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/app/': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRoutesByTo {
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/app/matches': typeof AuthenticatedAppMatchesRoute
   '/app/plan': typeof AuthenticatedAppPlanRoute
   '/rezept/$id': typeof AuthenticatedRezeptIdRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/app': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRoutesById {
@@ -149,6 +157,7 @@ export interface FileRoutesById {
   '/_authenticated/app/matches': typeof AuthenticatedAppMatchesRoute
   '/_authenticated/app/plan': typeof AuthenticatedAppPlanRoute
   '/_authenticated/rezept/$id': typeof AuthenticatedRezeptIdRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRouteTypes {
@@ -167,6 +176,7 @@ export interface FileRouteTypes {
     | '/app/matches'
     | '/app/plan'
     | '/rezept/$id'
+    | '/admin/'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -182,6 +192,7 @@ export interface FileRouteTypes {
     | '/app/matches'
     | '/app/plan'
     | '/rezept/$id'
+    | '/admin'
     | '/app'
   id:
     | '__root__'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/matches'
     | '/_authenticated/app/plan'
     | '/_authenticated/rezept/$id'
+    | '/_authenticated/admin/'
     | '/_authenticated/app/'
   fileRoutesById: FileRoutesById
 }
@@ -268,6 +280,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/join/$inviteCode'
       preLoaderRoute: typeof JoinInviteCodeRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/import': {
       id: '/_authenticated/admin/import'
@@ -345,6 +364,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedStartRoute: typeof AuthenticatedStartRoute
   AuthenticatedAdminImportRoute: typeof AuthenticatedAdminImportRoute
   AuthenticatedRezeptIdRoute: typeof AuthenticatedRezeptIdRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -352,6 +372,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedStartRoute: AuthenticatedStartRoute,
   AuthenticatedAdminImportRoute: AuthenticatedAdminImportRoute,
   AuthenticatedRezeptIdRoute: AuthenticatedRezeptIdRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

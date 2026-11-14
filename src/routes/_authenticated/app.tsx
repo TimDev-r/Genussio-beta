@@ -5,6 +5,7 @@ import { CalendarDays, Flame, Heart, Home, ShoppingCart } from "lucide-react";
 
 import { householdQuery } from "@/lib/household-query";
 import { MatchWatcher } from "@/components/MatchWatcher";
+import { WeeklyCheckIn } from "@/components/WeeklyCheckIn";
 export const Route = createFileRoute("/_authenticated/app")({
   beforeLoad: async ({ context }) => {
     const data = await context.queryClient.ensureQueryData(householdQuery());
@@ -28,6 +29,7 @@ function AppShell() {
     <div className="app-frame flex flex-col pb-20">
       {data.household && <MatchWatcher householdId={data.household.id} />}
       <main className="flex flex-1 flex-col">
+        <WeeklyCheckIn />
         <Outlet />
       </main>
       <nav className="fixed inset-x-0 bottom-0 mx-auto max-w-[480px] border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
