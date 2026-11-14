@@ -15,6 +15,8 @@ import {
   Star,
   Tag,
   Users,
+  Check,
+  ChefHat,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,7 +45,10 @@ import {
   type SwapOption,
 } from "@/lib/plan.functions";
 import { localizedRecipe } from "@/lib/catalog-localization";
-import { startOptions } from "@/lib/plan-dates";
+import { isoLocal, startOptions } from "@/lib/plan-dates";
+import { setCooked } from "@/lib/recipe.functions";
+
+const SKIP_REASONS = ["noTime", "noMood", "missingIngredients", "other"] as const;
 import { trackEvent } from "@/lib/track-event";
 import { formatPrice } from "@/i18n";
 import { cn } from "@/lib/utils";
@@ -175,6 +180,9 @@ export function WeekPlan(props: WeekPlanProps) {
   const [replan, setReplan] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [skipFor, setSkipFor] = useState<PlanEntry | null>(null);
+  const [skipped, setSkipped] = useState<Record<string, boolean>>({});
+  const today = isoLocal(new Date());
 
   const refresh = () =>
     Promise.all([
@@ -296,13 +304,26 @@ export function WeekPlan(props: WeekPlanProps) {
                 </div>
               ) : e.recipe_id ? (
                 <div className="flex gap-3 p-4">
-                  <img
-                    src={e.image_url || placeholder}
-                    alt=""
-                    className="size-20 shrink-0 rounded-2xl object-cover"
-                  />
+                  <Link
+                    to="/rezept/$id"
+                    params={{ id: e.recipe_id }}
+                    className="shrink-0"
+                    tabIndex={-1}
+                  >
+                    <img
+                      src={e.image_url || placeholder}
+                      alt=""
+                      className="size-20 rounded-2xl object-cover"
+                    />
+                  </Link>
                   <div className="min-w-0 flex-1 space-y-1">
-                    <p className="leading-tight font-extrabold">{name}</p>
+                    <Link
+                      to="/rezept/$id"
+                      params={{ id: e.recipe_id }}
+                      className="leading-tight font-extrabold hover:underline"
+                    >
+                      {name}
+                    </Link>
                     <p className="flex flex-wrap gap-x-3 text-sm text-muted-foreground">
                       {e.prep_minutes != null && (
                         <span className="inline-flex items-center gap-1">
@@ -389,10 +410,101 @@ export function WeekPlan(props: WeekPlanProps) {
                   </div>
                 )}
               </div>
+              {e.recipe_id && !e.is_leftover_day && e.plan_date <= today && (
+                <div className="flex items-center gap-2 border-t border-border px-3 py-2">
+                  {e.cooked_at ? (
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() =>
+                        void change(e.id, "uncooked", () =>
+                          setCooked({ data: { entryId: e.id, cooked: false } }),
+                        )
+                      }
+                      className="inline-flex items-center gap-1.5 rounded-full bg-deal-soft px-3 py-1.5 text-sm font-extrabold text-deal"
+                    >
+                      <Check className="size-4" strokeWidth={3} aria-hidden />
+                      {t("plan.cooked")}
+                    </button>
+                  ) : (
+                    <>
+                      <Button
+                        size="sm"
+                        className="bg-deal text-deal-foreground hover:bg-deal/90"
+                        disabled={busy}
+                        onClick={() =>
+                          void change(e.id, "cooked", async () => {
+                            await setCooked({ data: { entryId: e.id, cooked: true } });
+                            void trackEvent(
+                              "recipe_cooked",
+                              { recipe_id: e.recipe_id, source: "plan" },
+                              householdId,
+                            );
+                          })
+                        }
+                      >
+                        <Check />
+                        {t("plan.cooked")}
+                      </Button>
+                      {skipped[e.id] ? (
+                        <span className="text-sm text-muted-foreground">{t("plan.skipSaved")}</span>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          disabled={busy}
+                          onClick={() => setSkipFor(e)}
+                        >
+                          {t("plan.notCooked")}
+                        </Button>
+                      )}
+                    </>
+                  )}
+                  <Link
+                    to="/rezept/$id"
+                    params={{ id: e.recipe_id }}
+                    className="ml-auto inline-flex items-center gap-1 text-sm font-bold text-primary"
+                  >
+                    <ChefHat className="size-4" aria-hidden />
+                    {t("plan.toRecipe")}
+                  </Link>
+                </div>
+              )}
             </li>
           );
         })}
       </ul>
+
+      <Dialog open={skipFor !== null} onOpenChange={(o) => !o && setSkipFor(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("plan.skipTitle")}</DialogTitle>
+            <DialogDescription>{t("plan.skipText")}</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-2">
+            {SKIP_REASONS.map((reason) => (
+              <Button
+                key={reason}
+                variant="outline"
+                className="h-12 justify-start text-base"
+                onClick={() => {
+                  const entry = skipFor;
+                  setSkipFor(null);
+                  if (!entry) return;
+                  void trackEvent(
+                    "plan_skipped",
+                    { reason, recipe_id: entry.recipe_id, plan_date: entry.plan_date },
+                    householdId,
+                  );
+                  setSkipped((s) => ({ ...s, [entry.id]: true }));
+                }}
+              >
+                {t(`plan.skipReasons.${reason}`)}
+              </Button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {error && (
         <p role="alert" className="mt-3 text-center text-sm font-bold text-destructive">

@@ -23,6 +23,7 @@ import { Route as AuthenticatedAppHouseholdRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppListRouteImport } from './routes/_authenticated/app.list'
 import { Route as AuthenticatedAppMatchesRouteImport } from './routes/_authenticated/app.matches'
 import { Route as AuthenticatedAppPlanRouteImport } from './routes/_authenticated/app.plan'
+import { Route as AuthenticatedRezeptIdRouteImport } from './routes/_authenticated/rezept.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -95,6 +96,11 @@ const AuthenticatedAppPlanRoute = AuthenticatedAppPlanRouteImport.update({
   path: '/plan',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedRezeptIdRoute = AuthenticatedRezeptIdRouteImport.update({
+  id: '/rezept/$id',
+  path: '/rezept/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/app/list': typeof AuthenticatedAppListRoute
   '/app/matches': typeof AuthenticatedAppMatchesRoute
   '/app/plan': typeof AuthenticatedAppPlanRoute
+  '/rezept/$id': typeof AuthenticatedRezeptIdRoute
   '/app/': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRoutesByTo {
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/app/list': typeof AuthenticatedAppListRoute
   '/app/matches': typeof AuthenticatedAppMatchesRoute
   '/app/plan': typeof AuthenticatedAppPlanRoute
+  '/rezept/$id': typeof AuthenticatedRezeptIdRoute
   '/app': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRoutesById {
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/_authenticated/app/list': typeof AuthenticatedAppListRoute
   '/_authenticated/app/matches': typeof AuthenticatedAppMatchesRoute
   '/_authenticated/app/plan': typeof AuthenticatedAppPlanRoute
+  '/_authenticated/rezept/$id': typeof AuthenticatedRezeptIdRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRouteTypes {
@@ -157,6 +166,7 @@ export interface FileRouteTypes {
     | '/app/list'
     | '/app/matches'
     | '/app/plan'
+    | '/rezept/$id'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/app/list'
     | '/app/matches'
     | '/app/plan'
+    | '/rezept/$id'
     | '/app'
   id:
     | '__root__'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/list'
     | '/_authenticated/app/matches'
     | '/_authenticated/app/plan'
+    | '/_authenticated/rezept/$id'
     | '/_authenticated/app/'
   fileRoutesById: FileRoutesById
 }
@@ -299,6 +311,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppPlanRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/rezept/$id': {
+      id: '/_authenticated/rezept/$id'
+      path: '/rezept/$id'
+      fullPath: '/rezept/$id'
+      preLoaderRoute: typeof AuthenticatedRezeptIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -325,12 +344,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
   AuthenticatedStartRoute: typeof AuthenticatedStartRoute
   AuthenticatedAdminImportRoute: typeof AuthenticatedAdminImportRoute
+  AuthenticatedRezeptIdRoute: typeof AuthenticatedRezeptIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
   AuthenticatedStartRoute: AuthenticatedStartRoute,
   AuthenticatedAdminImportRoute: AuthenticatedAdminImportRoute,
+  AuthenticatedRezeptIdRoute: AuthenticatedRezeptIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

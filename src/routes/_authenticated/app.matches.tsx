@@ -90,11 +90,13 @@ function Page() {
               className="overflow-hidden rounded-3xl border border-border bg-card shadow-card"
             >
               <div className="relative">
-                <img
-                  src={m.image_url || placeholder}
-                  alt=""
-                  className="aspect-[16/9] w-full object-cover"
-                />
+                <Link to="/rezept/$id" params={{ id: m.recipe_id }} tabIndex={-1}>
+                  <img
+                    src={m.image_url || placeholder}
+                    alt=""
+                    className="aspect-[16/9] w-full object-cover"
+                  />
+                </Link>
                 {m.is_favorite && (
                   <span className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-xs font-extrabold text-primary-foreground">
                     <Star className="size-3.5 fill-current" aria-hidden />
@@ -103,7 +105,11 @@ function Page() {
                 )}
               </div>
               <div className="space-y-2 p-4">
-                <h2 className="text-lg leading-tight font-extrabold">{r.title}</h2>
+                <h2 className="text-lg leading-tight font-extrabold">
+                  <Link to="/rezept/$id" params={{ id: m.recipe_id }} className="hover:underline">
+                    {r.title}
+                  </Link>
+                </h2>
                 <p className="flex flex-wrap gap-x-3 text-sm text-muted-foreground">
                   {m.prep_minutes != null && (
                     <span className="inline-flex items-center gap-1">

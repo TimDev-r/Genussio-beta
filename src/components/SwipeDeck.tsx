@@ -6,6 +6,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from "react";
+import { Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Check, Clock, Heart, Plus, RotateCcw, Star, X } from "lucide-react";
@@ -33,6 +34,7 @@ import {
 import { localizedIngredient, localizedRecipe } from "@/lib/catalog-localization";
 import { trackEvent } from "@/lib/track-event";
 import { formatPrice } from "@/i18n";
+import { formatAmount } from "@/lib/recipe-format";
 import { cn } from "@/lib/utils";
 import placeholder from "@/assets/recipe-placeholder.jpg";
 
@@ -439,11 +441,20 @@ function CardFace({
                   )}
                 </span>
                 <span className="shrink-0 text-muted-foreground">
-                  {ing.quantity ?? ""} {ing.unit ?? ""}
+                  {formatAmount(ing.quantity, ing.unit, lang)}
                 </span>
               </li>
             ))}
           </ul>
+          <Link
+            to="/rezept/$id"
+            params={{ id: card.recipe_id }}
+            onPointerDown={(e) => e.stopPropagation()}
+            onPointerUp={(e) => e.stopPropagation()}
+            className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-primary underline"
+          >
+            {t("deck.fullRecipe")}
+          </Link>
         </div>
       ) : (
         <img

@@ -15,6 +15,7 @@ export type PlanEntry = {
   recipe_id: string | null;
   servings: number;
   is_leftover_day: boolean;
+  cooked_at: string | null;
   title: string | null;
   description: string | null;
   image_url: string | null;
@@ -59,7 +60,7 @@ export const getPlan = createServerFn({ method: "POST" })
         .single(),
       sb
         .from("meal_plan_entries")
-        .select("id,plan_date,recipe_id,servings,is_leftover_day")
+        .select("*")
         .eq("household_id", m.household_id)
         .eq("week_start", weekStart)
         .order("plan_date"),
@@ -113,6 +114,7 @@ export const getPlan = createServerFn({ method: "POST" })
           recipe_id: e.recipe_id,
           servings: e.servings ?? 1,
           is_leftover_day: e.is_leftover_day,
+          cooked_at: (e as { cooked_at?: string | null }).cooked_at ?? null,
           title: r?.title ?? null,
           description: r?.description ?? null,
           image_url: r?.image_url ?? null,

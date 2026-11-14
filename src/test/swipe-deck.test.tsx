@@ -13,6 +13,9 @@ vi.mock("@/lib/deck.functions", () => ({
   undoSwipe: (a: unknown) => undoSwipe(a),
   addMoreCards: (a: unknown) => addMoreCards(a),
 }));
+vi.mock("@tanstack/react-router", () => ({
+  Link: ({ children }: { children: unknown }) => <a>{children as string}</a>,
+}));
 vi.mock("@/lib/track-event", () => ({ trackEvent: vi.fn(async () => undefined) }));
 
 const { SwipeDeck } = await import("@/components/SwipeDeck");
