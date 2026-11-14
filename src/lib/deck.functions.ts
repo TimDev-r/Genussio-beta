@@ -7,7 +7,7 @@ import type { Database } from "@/integrations/supabase/types";
 type Sb = SupabaseClient<Database>;
 // The deck RPCs are installed by hand (supabase/manual) and are not in the generated types yet.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const rpc = (sb: Sb, fn: string, args: Record<string, unknown>) => (sb.rpc as any)(fn, args);
+export const rpc = (sb: Sb, fn: string, args: Record<string, unknown>) => (sb.rpc as any)(fn, args);
 
 export type Vote = "like" | "nope" | "super";
 
@@ -64,7 +64,7 @@ export type MatchCard = {
   dealBadges: DealBadge[];
 };
 
-async function membershipOf(sb: Sb, userId: string) {
+export async function membershipOf(sb: Sb, userId: string) {
   const { data, error } = await sb
     .from("household_members")
     .select("id,household_id")
@@ -74,14 +74,19 @@ async function membershipOf(sb: Sb, userId: string) {
   return data;
 }
 
-async function weekStartOf(sb: Sb) {
+export async function weekStartOf(sb: Sb) {
   const { data, error } = await sb.rpc("current_week_start");
   if (error) throw error;
   return data as unknown as string;
 }
 
 /** Recipe ingredients, the two best current deals per recipe, and translations. */
-async function recipeExtras(sb: Sb, householdId: string, weekStart: string, recipeIds: string[]) {
+export async function recipeExtras(
+  sb: Sb,
+  householdId: string,
+  weekStart: string,
+  recipeIds: string[],
+) {
   if (!recipeIds.length) {
     return {
       ingredients: new Map<string, CardIngredient[]>(),

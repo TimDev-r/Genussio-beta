@@ -4,6 +4,13 @@ const deDE = {
     sampleDish: "Kartoffelgulasch mit Tomaten",
     step1Text: "Jede Person wischt durch Gerichte aus den Angeboten der Woche – nach rechts, wenn's schmeckt.",
   },
+  deck: {
+    deals_one: "{{count}} Angebot",
+    deals_other: "{{count}} Angebote",
+    source: { deal: "Angebot" },
+  },
+  plan: { dealsTitle: "Angebote" },
+  list: { deal: "Angebot {{price}}" },
   empty: { household: { title: "Dein Haushalt", text: "Hier lädst du bald alle ein, die mitessen." } },
 };
 export default deDE;

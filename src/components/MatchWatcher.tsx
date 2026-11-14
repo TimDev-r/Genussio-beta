@@ -1,5 +1,5 @@
-// Mounted once in the app shell: listens for household swipes and deck changes in real time,
-// keeps the Swipen and Matches data fresh, and celebrates every new match on every phone.
+// Mounted once in the app shell: listens for household swipes, deck, plan and list changes in
+// real time, keeps every tab fresh, and celebrates every new match on every phone.
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -31,6 +31,16 @@ export function MatchWatcher({ householdId }: { householdId: string }) {
       )
       .on("postgres_changes", { event: "*", schema: "public", table: "deck_items", filter }, () =>
         refresh([["matches"], ["deck"], ["deck-adjusted-at"]]),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "meal_plan_entries", filter },
+        () => refresh([["plan"], ["list"]]),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "shopping_list_items", filter },
+        () => refresh([["list"], ["plan"]]),
       )
       .subscribe();
     return () => {
