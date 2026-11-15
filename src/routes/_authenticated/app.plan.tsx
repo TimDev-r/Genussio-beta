@@ -5,6 +5,7 @@ import { CalendarDays } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { PlanStart, WeekPlan } from "@/components/WeekPlan";
+import { LaunchPriceBanner } from "@/components/LaunchPriceBanner";
 import { planQuery } from "@/lib/plan-query";
 
 export const Route = createFileRoute("/_authenticated/app/plan")({
@@ -41,6 +42,7 @@ function Page() {
   return (
     <div className="flex flex-1 flex-col px-4 pt-6 pb-4">
       <h1 className="text-xl font-extrabold">{t("plan.title")}</h1>
+      {data.entries.length > 0 && <LaunchPriceBanner requirePlan className="mt-4" />}
       {data.entries.length > 0 ? (
         <WeekPlan
           householdId={data.householdId}

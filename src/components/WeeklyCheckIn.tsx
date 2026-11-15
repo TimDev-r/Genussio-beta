@@ -5,6 +5,7 @@ import { MessageCircleHeart, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getCheckIn, SAVINGS, submitCheckIn, WOULD_PAY } from "@/lib/feedback.functions";
 import { trackEvent } from "@/lib/track-event";
+import { LaunchPriceBanner } from "@/components/LaunchPriceBanner";
 import { cn } from "@/lib/utils";
 
 const DAYS = [0, 1, 2, 3, 4, 5, 6, 7] as const;
@@ -51,9 +52,13 @@ export function WeeklyCheckIn() {
 
   if (!data?.due) return null;
   if (done) {
+    const interested = pay === "ja" || pay === "vielleicht";
     return (
-      <div role="status" className="mx-4 mt-4 rounded-3xl bg-deal-soft p-4 font-bold text-deal">
-        {t("checkin.thanks")}
+      <div className="mx-4 mt-4 space-y-3">
+        <div role="status" className="rounded-3xl bg-deal-soft p-4 font-bold text-deal">
+          {t("checkin.thanks")}
+        </div>
+        {interested && <LaunchPriceBanner dismissible={false} />}
       </div>
     );
   }
@@ -83,10 +88,12 @@ export function WeeklyCheckIn() {
         queryClient.setQueryData(["checkin"], { ...data, due: false });
       } else {
         setDone(true);
-        window.setTimeout(
-          () => queryClient.setQueryData(["checkin"], { ...data, due: false }),
-          2500,
-        );
+        // Keep the launch-price pointer visible for interested households; otherwise fade out.
+        if (!(pay === "ja" || pay === "vielleicht"))
+          window.setTimeout(
+            () => queryClient.setQueryData(["checkin"], { ...data, due: false }),
+            2500,
+          );
       }
     } catch {
       setError(t("checkin.error"));

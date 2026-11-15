@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { HouseholdSettingsPage } from "@/components/HouseholdSettings";
 import { FeedbackCard } from "@/components/FeedbackCard";
 import { Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { LaunchPriceBanner } from "@/components/LaunchPriceBanner";
+import { DeleteAccount } from "@/components/DeleteAccount";
 import { BarChart3 } from "lucide-react";
 import { getAdminAccess } from "@/lib/admin.functions";
 import { householdQuery } from "@/lib/household-query";
@@ -18,11 +20,16 @@ export const Route = createFileRoute("/_authenticated/app/household")({
 });
 
 function HouseholdPage() {
+  const { data } = useSuspenseQuery(householdQuery());
+  const me = data.membership?.user_id;
+  const lastAdult = !data.members.some((m) => m.user_id && m.user_id !== me);
   return (
     <>
+      <LaunchPriceBanner dismissible={false} className="mx-6 mt-6" />
       <HouseholdSettingsPage />
       <FeedbackCard />
       <AdminLink />
+      <DeleteAccount lastAdult={lastAdult} />
     </>
   );
 }

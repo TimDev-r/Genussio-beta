@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, redirect, useRouterState } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { CalendarDays, Flame, Heart, Home, ShoppingCart } from "lucide-react";
@@ -6,6 +6,7 @@ import { CalendarDays, Flame, Heart, Home, ShoppingCart } from "lucide-react";
 import { householdQuery } from "@/lib/household-query";
 import { MatchWatcher } from "@/components/MatchWatcher";
 import { WeeklyCheckIn } from "@/components/WeeklyCheckIn";
+import { AppFooter } from "@/components/SiteFooter";
 export const Route = createFileRoute("/_authenticated/app")({
   beforeLoad: async ({ context }) => {
     const data = await context.queryClient.ensureQueryData(householdQuery());
@@ -25,12 +26,17 @@ const tabs = [
 function AppShell() {
   const { t } = useTranslation();
   const { data } = useSuspenseQuery(householdQuery());
+  // The swipe screen is sized to fit the phone; everywhere else the footer sits below the content.
+  const onSwipe = useRouterState({
+    select: (s) => s.location.pathname.replace(/\/$/, "") === "/app",
+  });
   return (
     <div className="app-frame flex flex-col pb-20">
       {data.household && <MatchWatcher householdId={data.household.id} />}
       <main className="flex flex-1 flex-col">
         <WeeklyCheckIn />
         <Outlet />
+        {!onSwipe && <AppFooter />}
       </main>
       <nav className="fixed inset-x-0 bottom-0 mx-auto max-w-[480px] border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
         <ul className="grid grid-cols-5">

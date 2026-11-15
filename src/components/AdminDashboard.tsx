@@ -6,6 +6,7 @@ import { ArrowLeft, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getAdminDashboard, type Dashboard } from "@/lib/feedback.functions";
+import { adminSetReservation } from "@/lib/reservation.functions";
 import { cn } from "@/lib/utils";
 
 const FUNNEL_LABELS: Record<string, string> = {
@@ -94,7 +95,7 @@ export function AdminDashboard() {
   const [from, setFrom] = useState(isoDaysAgo(30));
   const [to, setTo] = useState(isoDaysAgo(0));
   const [group, setGroup] = useState("all");
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["admin-dashboard", from, to, group],
     queryFn: () => getAdminDashboard({ data: { from: from || null, to: to || null, group } }),
   });
@@ -274,7 +275,11 @@ export function AdminDashboard() {
                       <td className="py-2 pr-3">{h.plans}</td>
                       <td className="py-2 pr-3">{h.cooked}</td>
                       <td className="py-2">
-                        {h.reservation ? (RESERVATION_LABELS[h.reservation] ?? h.reservation) : "–"}
+                        <ReservationSelect
+                          householdId={h.id}
+                          value={h.reservation}
+                          onSaved={() => void refetch()}
+                        />
                       </td>
                     </tr>
                   ))}
@@ -329,4 +334,56 @@ function describeCheckIn(answer: string | null) {
   } catch {
     return answer ?? "";
   }
+}
+
+/** Change a household's reservation by hand, e.g. mark it "bezahlt" after checking Stripe. */
+function ReservationSelect({
+  householdId,
+  value,
+  onSaved,
+}: {
+  householdId: string;
+  value: string | null;
+  onSaved: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
+  return (
+    <select
+      aria-label="Reservierung"
+      value={value ?? ""}
+      disabled={busy}
+      onChange={async (e) => {
+        const next = e.target.value || null;
+        if (next === "erstattet" && !window.confirm("Als erstattet markieren?")) return;
+        setBusy(true);
+        setFailed(false);
+        try {
+          await adminSetReservation({
+            data: {
+              householdId,
+              status: next as "geklickt" | "vorgemerkt" | "bezahlt" | "erstattet" | null,
+            },
+          });
+          onSaved();
+        } catch {
+          setFailed(true);
+        } finally {
+          setBusy(false);
+        }
+      }}
+      className={cn(
+        "h-8 rounded-lg border bg-background px-2 text-sm",
+        failed ? "border-destructive" : "border-input",
+        value === "bezahlt" && "font-bold text-deal",
+      )}
+    >
+      <option value="">–</option>
+      {Object.entries(RESERVATION_LABELS).map(([k, label]) => (
+        <option key={k} value={k}>
+          {label}
+        </option>
+      ))}
+    </select>
+  );
 }

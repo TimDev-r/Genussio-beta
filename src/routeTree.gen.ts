@@ -24,6 +24,8 @@ import { Route as AuthenticatedAppHouseholdRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppListRouteImport } from './routes/_authenticated/app.list'
 import { Route as AuthenticatedAppMatchesRouteImport } from './routes/_authenticated/app.matches'
 import { Route as AuthenticatedAppPlanRouteImport } from './routes/_authenticated/app.plan'
+import { Route as AuthenticatedGruenderpreisIndexRouteImport } from './routes/_authenticated/gruenderpreis.index'
+import { Route as AuthenticatedGruenderpreisDankeRouteImport } from './routes/_authenticated/gruenderpreis.danke'
 import { Route as AuthenticatedRezeptIdRouteImport } from './routes/_authenticated/rezept.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -102,6 +104,18 @@ const AuthenticatedAppPlanRoute = AuthenticatedAppPlanRouteImport.update({
   path: '/plan',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedGruenderpreisIndexRoute =
+  AuthenticatedGruenderpreisIndexRouteImport.update({
+    id: '/gruenderpreis/',
+    path: '/gruenderpreis/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedGruenderpreisDankeRoute =
+  AuthenticatedGruenderpreisDankeRouteImport.update({
+    id: '/gruenderpreis/danke',
+    path: '/gruenderpreis/danke',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedRezeptIdRoute = AuthenticatedRezeptIdRouteImport.update({
   id: '/rezept/$id',
   path: '/rezept/$id',
@@ -121,9 +135,11 @@ export interface FileRoutesByFullPath {
   '/app/list': typeof AuthenticatedAppListRoute
   '/app/matches': typeof AuthenticatedAppMatchesRoute
   '/app/plan': typeof AuthenticatedAppPlanRoute
+  '/gruenderpreis/danke': typeof AuthenticatedGruenderpreisDankeRoute
   '/rezept/$id': typeof AuthenticatedRezeptIdRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/app/': typeof AuthenticatedAppIndexRoute
+  '/gruenderpreis/': typeof AuthenticatedGruenderpreisIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -137,9 +153,11 @@ export interface FileRoutesByTo {
   '/app/list': typeof AuthenticatedAppListRoute
   '/app/matches': typeof AuthenticatedAppMatchesRoute
   '/app/plan': typeof AuthenticatedAppPlanRoute
+  '/gruenderpreis/danke': typeof AuthenticatedGruenderpreisDankeRoute
   '/rezept/$id': typeof AuthenticatedRezeptIdRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/app': typeof AuthenticatedAppIndexRoute
+  '/gruenderpreis': typeof AuthenticatedGruenderpreisIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -156,9 +174,11 @@ export interface FileRoutesById {
   '/_authenticated/app/list': typeof AuthenticatedAppListRoute
   '/_authenticated/app/matches': typeof AuthenticatedAppMatchesRoute
   '/_authenticated/app/plan': typeof AuthenticatedAppPlanRoute
+  '/_authenticated/gruenderpreis/danke': typeof AuthenticatedGruenderpreisDankeRoute
   '/_authenticated/rezept/$id': typeof AuthenticatedRezeptIdRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
+  '/_authenticated/gruenderpreis/': typeof AuthenticatedGruenderpreisIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -175,9 +195,11 @@ export interface FileRouteTypes {
     | '/app/list'
     | '/app/matches'
     | '/app/plan'
+    | '/gruenderpreis/danke'
     | '/rezept/$id'
     | '/admin/'
     | '/app/'
+    | '/gruenderpreis/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -191,9 +213,11 @@ export interface FileRouteTypes {
     | '/app/list'
     | '/app/matches'
     | '/app/plan'
+    | '/gruenderpreis/danke'
     | '/rezept/$id'
     | '/admin'
     | '/app'
+    | '/gruenderpreis'
   id:
     | '__root__'
     | '/'
@@ -209,9 +233,11 @@ export interface FileRouteTypes {
     | '/_authenticated/app/list'
     | '/_authenticated/app/matches'
     | '/_authenticated/app/plan'
+    | '/_authenticated/gruenderpreis/danke'
     | '/_authenticated/rezept/$id'
     | '/_authenticated/admin/'
     | '/_authenticated/app/'
+    | '/_authenticated/gruenderpreis/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -330,6 +356,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppPlanRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/gruenderpreis/': {
+      id: '/_authenticated/gruenderpreis/'
+      path: '/gruenderpreis'
+      fullPath: '/gruenderpreis/'
+      preLoaderRoute: typeof AuthenticatedGruenderpreisIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/gruenderpreis/danke': {
+      id: '/_authenticated/gruenderpreis/danke'
+      path: '/gruenderpreis/danke'
+      fullPath: '/gruenderpreis/danke'
+      preLoaderRoute: typeof AuthenticatedGruenderpreisDankeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/rezept/$id': {
       id: '/_authenticated/rezept/$id'
       path: '/rezept/$id'
@@ -363,16 +403,20 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
   AuthenticatedStartRoute: typeof AuthenticatedStartRoute
   AuthenticatedAdminImportRoute: typeof AuthenticatedAdminImportRoute
+  AuthenticatedGruenderpreisDankeRoute: typeof AuthenticatedGruenderpreisDankeRoute
   AuthenticatedRezeptIdRoute: typeof AuthenticatedRezeptIdRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedGruenderpreisIndexRoute: typeof AuthenticatedGruenderpreisIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
   AuthenticatedStartRoute: AuthenticatedStartRoute,
   AuthenticatedAdminImportRoute: AuthenticatedAdminImportRoute,
+  AuthenticatedGruenderpreisDankeRoute: AuthenticatedGruenderpreisDankeRoute,
   AuthenticatedRezeptIdRoute: AuthenticatedRezeptIdRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedGruenderpreisIndexRoute: AuthenticatedGruenderpreisIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

@@ -15,6 +15,7 @@ import { readAttribution } from "@/lib/attribution";
 import { supabase } from "@/integrations/supabase/client";
 import { pageHead } from "@/lib/page-head";
 import { trackEvent } from "@/lib/track-event";
+import { metaTrack } from "@/lib/consent";
 
 export const Route = createFileRoute("/_authenticated/start")({
   loader: async ({ context }) => {
@@ -151,6 +152,7 @@ function Start() {
             });
             if (error) throw error;
             await trackEvent("household_created", {}, id);
+            metaTrack("CompleteRegistration");
             await refresh();
             setStep("diet");
           }}

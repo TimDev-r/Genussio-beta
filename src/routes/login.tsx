@@ -6,6 +6,7 @@ import { captureAttribution } from "@/lib/attribution";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { BetaDisclaimer, LegalLinks } from "@/components/SiteFooter";
 import { LanguagePicker } from "@/components/LanguagePicker";
 import { useSession } from "@/lib/session";
 import { safeReturnPath } from "@/lib/household-rules";
@@ -199,6 +200,10 @@ function Login() {
           )}
         </form>
       </div>
+      <footer className="mt-12 border-t border-border pt-5 text-xs">
+        <LegalLinks className="-mx-2 text-muted-foreground" />
+        <BetaDisclaimer className="mt-2" />
+      </footer>
     </div>
   );
 }

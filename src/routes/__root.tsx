@@ -18,6 +18,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { ensureProfile } from "@/lib/profile";
+import { ConsentBanner } from "@/components/ConsentBanner";
 import { SessionContext } from "@/lib/session";
 import { isLocale, setLocale } from "@/i18n";
 
@@ -216,6 +217,7 @@ function RootComponent() {
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <SessionContext.Provider value={sessionState}>
           <Outlet />
+          <ConsentBanner />
         </SessionContext.Provider>
       </QueryClientProvider>
     </I18nextProvider>

@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { readAttribution } from "@/lib/attribution";
 import { isLocale, type Locale } from "@/i18n";
 import { trackEvent } from "@/lib/track-event";
+import { metaTrack } from "@/lib/consent";
 
 export async function ensureProfile(user: User, locale: Locale) {
   const { data: existing, error: readError } = await supabase
@@ -45,6 +46,7 @@ export async function ensureProfile(user: User, locale: Locale) {
       if (metadataError) throw metadataError;
     }
     await trackEvent("signed_up", { method });
+    metaTrack("Lead");
     return data;
   }
   const { data: winner, error: winnerError } = await supabase
