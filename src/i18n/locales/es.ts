@@ -2,6 +2,8 @@ import type { Resource } from "./de-AT";
 const es: Resource = {
   meta: { title: "Genussio – Decidid juntos qué cenar", appTitle: "Genussio" },
   onboarding: {
+    allergyConsent:
+      "Acepto que Genussio guarde estas alergias para no proponer recetas con estos alérgenos. Puedo borrarlas en cualquier momento.",
     google: "Continuar con Google",
     orEmail: "o con email",
     email: "Email",

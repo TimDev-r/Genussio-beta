@@ -1,6 +1,8 @@
 const deAT = {
   meta: { title: "Genussio – Gemeinsam entscheiden, was es zum Essen gibt", appTitle: "Genussio" },
   onboarding: {
+    allergyConsent:
+      "Ich willige ein, dass Genussio diese Allergie-Angaben speichert, um keine Rezepte mit diesen Allergenen vorzuschlagen. Ich kann sie jederzeit löschen.",
     google: "Mit Google fortfahren",
     orEmail: "oder mit E-Mail",
     email: "E-Mail",

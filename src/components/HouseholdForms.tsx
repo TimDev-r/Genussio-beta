@@ -1,3 +1,4 @@
+import { trackEvent } from "@/lib/track-event";
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, X, Save } from "lucide-react";
@@ -172,6 +173,9 @@ export function MemberForm({
   const [dislike, setDislike] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
+  // Allergies are health data (Art. 9 GDPR): saving them needs an explicit opt-in.
+  const [allergyConsent, setAllergyConsent] = useState(initial.allergies.length > 0);
+  const needsConsent = v.allergies.length > 0 && !allergyConsent;
   const add = () => {
     const d = dislike.trim();
     if (d && !v.dislikes.includes(d)) setV({ ...v, dislikes: [...v.dislikes, d] });
@@ -184,8 +188,11 @@ export function MemberForm({
         e.preventDefault();
         setBusy(true);
         setError(false);
+        if (needsConsent) return;
         try {
           await onSave(memberSchema.parse(v));
+          if (v.allergies.length > 0)
+            void trackEvent("allergy_consent_given", { allergies: v.allergies.length });
         } catch {
           setError(true);
         } finally {
@@ -241,6 +248,28 @@ export function MemberForm({
             </Button>
           ))}
         </div>
+        {v.allergies.length > 0 && (
+          <label className="mt-3 flex items-start gap-3 rounded-2xl bg-muted p-3 text-sm">
+            <input
+              type="checkbox"
+              required
+              checked={allergyConsent}
+              onChange={(e) => setAllergyConsent(e.target.checked)}
+              className="mt-0.5 size-5 shrink-0 accent-[var(--color-primary)]"
+            />
+            <span>
+              {t("onboarding.allergyConsent")}{" "}
+              <a
+                href="/datenschutz"
+                target="_blank"
+                rel="noreferrer"
+                className="font-bold underline"
+              >
+                {t("footer.privacy")}
+              </a>
+            </span>
+          </label>
+        )}
       </fieldset>
       {!isKid && (
         <div>
